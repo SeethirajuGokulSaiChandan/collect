@@ -300,25 +300,6 @@ public class GeoODKMainMapActivity extends Activity implements IRegisterReceiver
         resource_proxy = new DefaultResourceProxyImpl(this.getApplicationContext());
         mapView = (MapView)this.findViewById(R.id.MapViewId);
 
-        final WMSMapTileProviderBasic tileProvider = new WMSMapTileProviderBasic(getApplicationContext());
-        final ITileSource tileSource = new WMSTileSource("wmsserver", null, 3, 18, 256, ".png","http://bhuvannuis.nrsc.gov.in/bhuvan/wms" +
-                "?service=WMS" +
-                "&version=1.1.0" +
-                "&request=GetMap" +
-                "&layers=india3" +
-                "&bbox=%f,%f,%f,%f" +
-                "&width=256" +
-                "&height=256" +
-                "&srs=EPSG:900913" +
-                "&format=image/png" +
-                "&transparent=true");
-        tileProvider.setTileSource(tileSource);
-        final TilesOverlay tilesOverlay = new TilesOverlay(tileProvider, this.getBaseContext());
-
-        tilesOverlay.setLoadingBackgroundColor(Color.TRANSPARENT);
-
-        mapView.getOverlays().add(tilesOverlay);
-
         mapView.setMultiTouchControls(true);
         mapView.setBuiltInZoomControls(true);
         //mapView.setUseDataConnection(online);
