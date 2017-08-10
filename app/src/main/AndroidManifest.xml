@@ -250,7 +250,7 @@
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyBS-JQ-dnaZ_8qsbvSyr_I3rTPFd5fJsYI" />
+            android:value="AIzaSyBhw8su9oglW1lW6gZLOoWIgq5upk9wOi0" />
 
         <uses-library
             android:name="com.google.android.maps"
@@ -282,6 +282,11 @@
             android:label="@string/geoodk_mainTitle" >
 
         </activity>
+        <activity
+            android:name=".activities.TestActivity"
+            android:configChanges="orientation"
+            android:label="@string/title_activity_osm__map"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
     </application>
 
 </manifest>

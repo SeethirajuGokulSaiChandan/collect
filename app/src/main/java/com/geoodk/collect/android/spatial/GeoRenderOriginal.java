@@ -1,9 +1,5 @@
 package com.geoodk.collect.android.spatial;
 
-/**
- * Created by jnordling on 9/13/15.
- */
-
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
@@ -14,13 +10,10 @@ import android.net.Uri;
 import com.geoodk.collect.android.R;
 import com.geoodk.collect.android.provider.FormsProviderAPI;
 import com.geoodk.collect.android.provider.InstanceProviderAPI;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.util.GeoPoint;
-
+import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.PathOverlay;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -37,11 +30,14 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+/**
+ * Created by RRSCW on 10-08-2017.
+ */
 
-public class GeoRender {
+public class GeoRenderOriginal {
 
     public Context context;
-    public GoogleMap mMap;
+    public MapView mapView;
     public ArrayList<GeoFeature> geoFeatures = new ArrayList<GeoFeature>();
     private XmlPullParserFactory factory;
     private ArrayList geoDataArray;
@@ -54,11 +50,11 @@ public class GeoRender {
     }
 
 
-    public GeoRender(Context pContext,GoogleMap mMap) {
+    public GeoRenderOriginal(Context pContext,MapView mapView) {
 
-        if((pContext != null) && (mMap !=null)) {
+        if((pContext != null) && (mapView !=null)) {
             this.context = pContext;
-            this.mMap = mMap;
+            this.mapView = mapView;
             Cursor instanceCursor = this.getAllCursor();
             while (instanceCursor.moveToNext()) {
                 String instance_url = instanceCursor.getString(instanceCursor.getColumnIndex("instanceFilePath"));
@@ -138,7 +134,10 @@ public class GeoRender {
                             geoObject.setGeotype(type);
                             //Set The overlay data
                             if (type.equals( geopoint)){
-                                createPointOverlay(geoFeature, geoObject);
+                                geoObject.setPointMarker(createPointOverlay(geoFeature, geoObject));
+                            }
+                            if (type.equals(geoshape) || type.equals(geotrace)) {
+                                createPathOverlay(geoFeature, geoObject);
                             }
 
 
@@ -159,52 +158,6 @@ public class GeoRender {
         return geoFields;
     }
 
-    private void createPointOverlay(GeoFeature geoFeature,GeoObject geoObject){
-        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder dBuilder;
-
-        try{
-            dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = null;
-            try {
-                File file = new File(geoFeature.instance_url);
-                doc = dBuilder.parse(file);
-                doc.getDocumentElement().normalize();
-                String root = doc.getDocumentElement().getNodeName();
-                NodeList nList = doc.getElementsByTagName(geoObject.getNodeset());
-                for (int temp = 0; temp < nList.getLength(); temp++) {
-                    Node nNode = nList.item(temp);
-                    nNode.getNodeName();
-                    String name = nNode.getNodeName();
-                    Short s = nNode.getNodeType();
-
-                    if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-                        Element eElement = (Element) nNode;
-                        String value = eElement.getTextContent();
-                        if ((value != null) && (!value.equals(""))){
-                            String[] location = value.split(" ");
-                            String z = "";
-                            Double lat = Double.parseDouble(location[0]);
-                            Double lng = Double.parseDouble(location[1]);
-                            GeoPoint point = new GeoPoint(lat, lng);
-
-                            mMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title("Indore"));
-                        }
-                    }
-                }
-            } catch (SAXException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }catch(ParserConfigurationException e){
-            e.printStackTrace();
-        }
-
-    }
-/*
     private CustomMarkerHelper createPointOverlay(GeoFeature geoFeature,GeoObject geoObject){
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder;
@@ -263,7 +216,6 @@ public class GeoRender {
         }
         return marker;
     }
-
     private void createPathOverlay(GeoFeature geoFeature,GeoObject geoObject){
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder;
@@ -298,8 +250,8 @@ public class GeoRender {
                                 String lng = sp[1].replace(" ", "");
                                 gp[0] = Double.parseDouble(lat);
                                 gp[1] = Double.parseDouble(lng);
-                    //			gp[0] = Double.valueOf(lat).doubleValue();
-                    //			gp[1] = Double.valueOf(lng).doubleValue();
+                                //			gp[0] = Double.valueOf(lat).doubleValue();
+                                //			gp[1] = Double.valueOf(lng).doubleValue();
                                 Marker marker = new Marker(mapView);
                                 GeoPoint point = new GeoPoint(gp[0], gp[1]);
                                 marker.setPosition(point);
@@ -331,6 +283,4 @@ public class GeoRender {
 //        return marker;
 
     }
-*/
-
 }

@@ -44,6 +44,7 @@ import com.geoodk.collect.android.R;
 import com.geoodk.collect.android.application.Collect;
 import com.geoodk.collect.android.preferences.MapSettings;
 import com.geoodk.collect.android.spatial.GeoRender;
+import com.geoodk.collect.android.spatial.GeoRenderOriginal;
 import com.geoodk.collect.android.spatial.MBTileProvider;
 import com.geoodk.collect.android.spatial.MapHelper;
 
@@ -89,7 +90,7 @@ public class GeoODKMapThemeActivity extends Activity implements IRegisterReceive
 	private int selected_layer= -1;
 	private TilesOverlay mbTileOverlay;
 
-	private GeoRender geoRender;
+	private GeoRenderOriginal geoRender;
 
 	
     public static final String FORMS_PATH = Collect.ODK_ROOT + File.separator + "forms";
@@ -122,7 +123,7 @@ public class GeoODKMapThemeActivity extends Activity implements IRegisterReceive
 	}
 
 	private void drawMarkers(){
-		geoRender = new GeoRender(this.getApplicationContext(),mapView);
+		geoRender = new GeoRenderOriginal(this.getApplicationContext(),mapView);
 	}
 	@Override
 	public void finish() {

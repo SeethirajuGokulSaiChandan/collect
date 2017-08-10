@@ -51,6 +51,7 @@ import com.geoodk.collect.android.application.Collect;
 import com.geoodk.collect.android.preferences.MapSettings;
 import com.geoodk.collect.android.spatial.CustomMarkerHelper;
 import com.geoodk.collect.android.spatial.GeoRender;
+import com.geoodk.collect.android.spatial.GeoRenderOriginal;
 import com.geoodk.collect.android.spatial.MBTileProvider;
 import com.geoodk.collect.android.spatial.MapHelper;
 
@@ -132,7 +133,7 @@ public class GeoODKMainMapActivity extends Activity implements IRegisterReceiver
     private ImageButton gps_button;
     private ImageButton layers_button;
     private ImageButton map_setting_button;
-    private GeoRender geoRender;
+    private GeoRenderOriginal geoRender;
 
     XmlPullParserFactory factory;
 
@@ -249,7 +250,7 @@ public class GeoODKMainMapActivity extends Activity implements IRegisterReceiver
         }
     }
     private void drawMarkers(){
-        geoRender = new GeoRender(this.getApplicationContext(),mapView);
+        geoRender = new GeoRenderOriginal(this.getApplicationContext(),mapView);
     }
 
 
@@ -298,6 +299,26 @@ public class GeoODKMainMapActivity extends Activity implements IRegisterReceiver
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         resource_proxy = new DefaultResourceProxyImpl(this.getApplicationContext());
         mapView = (MapView)this.findViewById(R.id.MapViewId);
+
+        final WMSMapTileProviderBasic tileProvider = new WMSMapTileProviderBasic(getApplicationContext());
+        final ITileSource tileSource = new WMSTileSource("wmsserver", null, 3, 18, 256, ".png","http://bhuvannuis.nrsc.gov.in/bhuvan/wms" +
+                "?service=WMS" +
+                "&version=1.1.0" +
+                "&request=GetMap" +
+                "&layers=india3" +
+                "&bbox=%f,%f,%f,%f" +
+                "&width=256" +
+                "&height=256" +
+                "&srs=EPSG:900913" +
+                "&format=image/png" +
+                "&transparent=true");
+        tileProvider.setTileSource(tileSource);
+        final TilesOverlay tilesOverlay = new TilesOverlay(tileProvider, this.getBaseContext());
+
+        tilesOverlay.setLoadingBackgroundColor(Color.TRANSPARENT);
+
+        mapView.getOverlays().add(tilesOverlay);
+
         mapView.setMultiTouchControls(true);
         mapView.setBuiltInZoomControls(true);
         //mapView.setUseDataConnection(online);
@@ -478,16 +499,7 @@ public class GeoODKMainMapActivity extends Activity implements IRegisterReceiver
                             layerStatus = false;
                             break;
                         default:
-                            mapView.getOverlays().remove(mbTileOverlay);
-                            String mbFilePath = MapHelper.getMBTileFromItem(item);
-                            //File mbFile = new File(Collect.OFFLINE_LAYERS+"/GlobalLights/control-room.mbtiles");
-                            final File mbFile = new File(mbFilePath);
-                            mbprovider = new MBTileProvider(GeoODKMainMapActivity.this, mbFile);
-                            mbTileOverlay = new TilesOverlay(mbprovider, self.getApplicationContext());
-                            mbTileOverlay.setLoadingBackgroundColor(Color.TRANSPARENT);
-                            clearMapMarkers();
-                            mapView.getOverlays().add(mbTileOverlay);
-                            drawMarkers();
+
                             mapView.invalidate();
 
                     }

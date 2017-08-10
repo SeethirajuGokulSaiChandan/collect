@@ -111,7 +111,7 @@ public class SplashScreenActivity extends Activity {
     	//Used when testing specific activity :)
 //        startActivity(new Intent(SplashScreenActivity.this, GeoODKClassicActivity.class));
         if (theme.equals("map")){
-            startActivity(new Intent(SplashScreenActivity.this, GeoODKMapThemeActivity.class));
+            startActivity(new Intent(SplashScreenActivity.this, GeoODKClassicActivity.class));
         }else{
             startActivity(new Intent(SplashScreenActivity.this, GeoODKClassicActivity.class));
         }
